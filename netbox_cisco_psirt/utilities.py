@@ -1,6 +1,6 @@
 from dcim.models import Device
 from netbox_cisco_psirt.models import Advisory, Vulnerability
-from netbox_cisco_psirt.api import CiscoOpenVulnClient
+from netbox_cisco_psirt.cisco_api import CiscoOpenVulnClient
 import logging
 
 logger = logging.getLogger(__name__)

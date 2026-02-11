@@ -39,5 +39,5 @@ class VulnerabilityTable(NetBoxTable):
     
     class Meta(NetBoxTable.Meta):
         model = Vulnerability
-        fields = ('pk', 'device', 'advisory', 'advisory_sir', 'advisory_first_fixed', 'status')
+        fields = ('pk', 'device', 'advisory', 'status')
         default_columns = ('device', 'advisory', 'advisory_sir', 'advisory_first_fixed', 'status')
