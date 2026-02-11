@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 class CiscoOpenVulnClient:
     TOKEN_URL = "https://id.cisco.com/oauth2/default/v1/token"
-    API_BASE = "https://api.cisco.com/security/advisories/v2"
+    API_BASE = "https://apix.cisco.com/security/advisories/v2"
 
     def __init__(self):
         plugin_config = settings.PLUGINS_CONFIG.get('netbox_cisco_psirt', {})
