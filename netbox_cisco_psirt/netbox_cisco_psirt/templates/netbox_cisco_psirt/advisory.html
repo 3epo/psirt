@@ -1,0 +1,60 @@
+{% extends 'generic/object.html' %}
+{% load helpers %}
+
+{% block breadcrumbs %}
+<li class="breadcrumb-item"><a href="{% url 'plugins:netbox_cisco_psirt:advisory_list' %}">Advisories</a></li>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col col-md-6">
+        <div class="card">
+            <h5 class="card-header">
+                Advisory Details
+            </h5>
+            <div class="card-body">
+                <table class="table table-hover attr-table">
+                    <tr>
+                        <th scope="row">ID</th>
+                        <td>{{ object.advisory_id }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Title</th>
+                        <td>{{ object.title }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Severity</th>
+                        <td>{{ object.sir }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">CVSS Score</th>
+                        <td>{{ object.cvss_base_score }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Published</th>
+                        <td>{{ object.first_published|placeholder }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Updated</th>
+                        <td>{{ object.last_updated|placeholder }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">URL</th>
+                        <td><a href="{{ object.publication_url }}" target="_blank">{{ object.publication_url }}</a></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col col-md-6">
+        <div class="card">
+            <h5 class="card-header">
+                Description
+            </h5>
+            <div class="card-body">
+                {{ object.summary|markdown }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

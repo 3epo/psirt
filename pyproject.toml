@@ -1,0 +1,20 @@
+[project]
+name = "netbox-cisco-psirt"
+version = "0.1.0"
+description = "A Netbox plugin to track Cisco PSIRT advisories for devices."
+authors = [
+    { name = "Andrey Orlov", email = "andreyorlov@example.com" }
+]
+license = { text = "Apache-2.0" }
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "requests>=2.28.0",
+]
+
+[project.entry-points."netbox_plugins"]
+netbox_cisco_psirt = "netbox_cisco_psirt:NetboxCiscoPsirtConfig"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
