@@ -5,6 +5,7 @@ from . import models, views
 urlpatterns = [
     # Advisories
     path('advisories/', views.AdvisoryListView.as_view(), name='advisory_list'),
+    path('advisories/sync/', views.SyncCiscoPsirtView.as_view(), name='sync'),
     path('advisories/add/', views.AdvisoryEditView.as_view(), name='advisory_add'),
     path('advisories/<int:pk>/', views.AdvisoryView.as_view(), name='advisory'),
     path('advisories/<int:pk>/edit/', views.AdvisoryEditView.as_view(), name='advisory_edit'),

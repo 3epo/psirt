@@ -1,1 +1,20 @@
 {% extends 'generic/object_list.html' %}
+
+{% block controls %}
+<div class="controls">
+    <div class="control-group">
+        {% if perms.netbox_cisco_psirt.change_advisory %}
+        <form method="post" action="{% url 'plugins:netbox_cisco_psirt:sync' %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-primary">
+                <i class="mdi mdi-refresh"></i> Sync Cisco PSIRT
+            </button>
+        </form>
+        {% endif %}
+
+        <a href="{% url 'plugins:netbox_cisco_psirt:advisory_add' %}" class="btn btn-sm btn-success">
+            <i class="mdi mdi-plus-thick" aria-hidden="true"></i> Add Advisory
+        </a>
+    </div>
+</div>
+{% endblock %}
