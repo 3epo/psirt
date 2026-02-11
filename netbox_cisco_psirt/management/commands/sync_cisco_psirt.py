@@ -42,7 +42,12 @@ class Command(BaseCommand):
             # Decide whether to call IOS or IOS-XE endpoint based on platform name of the first device
             # This is a heuristic; deeper logic might check Platform object fields
             platform_name = device_list[0].platform.name if device_list[0].platform else ""
-            is_xe = 'IOS-XE' in platform_name or 'ios-xe' in platform_name.lower()
+            is_xe = (
+                'IOS-XE' in platform_name 
+                or 'ios-xe' in platform_name.lower()
+                or version.startswith('16.')
+                or version.startswith('17.')
+            )
             
             self.stdout.write(f"Checking version: {version} (Type: {'IOS-XE' if is_xe else 'IOS'}) for {len(device_list)} devices...")
 
