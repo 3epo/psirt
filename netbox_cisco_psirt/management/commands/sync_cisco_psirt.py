@@ -39,11 +39,13 @@ class Command(BaseCommand):
                 version_map[version].append(device)
 
         for version, device_list in version_map.items():
-            self.stdout.write(f"Checking version: {version} for {len(device_list)} devices...")
-            
             # Decide whether to call IOS or IOS-XE endpoint based on platform name of the first device
-            is_xe = 'IOS-XE' in device_list[0].platform.name
+            # This is a heuristic; deeper logic might check Platform object fields
+            platform_name = device_list[0].platform.name if device_list[0].platform else ""
+            is_xe = 'IOS-XE' in platform_name or 'ios-xe' in platform_name.lower()
             
+            self.stdout.write(f"Checking version: {version} (Type: {'IOS-XE' if is_xe else 'IOS'}) for {len(device_list)} devices...")
+
             advisories_data = []
             if is_xe:
                 advisories_data = client.get_advisories_by_ios_xe(version)
