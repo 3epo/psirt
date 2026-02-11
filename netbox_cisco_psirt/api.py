@@ -59,8 +59,9 @@ class CiscoOpenVulnClient:
     def get_advisories_by_ios_xe(self, version):
         """
         Fetch advisories for a specific IOS-XE version.
+        Ex: https://api.cisco.com/security/advisories/v2/OSType/iosxe?version=16.9.3
         """
-        url = f"{self.API_BASE}/iosxe?version={version}"
+        url = f"{self.API_BASE}/OSType/iosxe?version={version}"
         try:
             response = requests.get(url, headers=self.get_headers())
             response.raise_for_status()
