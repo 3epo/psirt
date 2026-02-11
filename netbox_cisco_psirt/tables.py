@@ -28,16 +28,18 @@ class VulnerabilityTable(NetBoxTable):
             <span class="badge bg-secondary text-white">{{ record.advisory.sir }}</span>
         {% endif %}
         """,
-        verbose_name='Severity'
+        verbose_name='Severity',
+        order_by='advisory__sir'
     )
     
     # Access first_fixed from Advisory
     advisory_first_fixed = tables.Column(
         accessor='advisory.first_fixed',
-        verbose_name='Fixed Versions'
+        verbose_name='Fixed Versions',
+        orderable=False
     )
     
     class Meta(NetBoxTable.Meta):
         model = Vulnerability
-        fields = ('pk', 'device', 'advisory', 'status')
+        fields = ('pk', 'device', 'advisory', 'advisory_sir', 'advisory_first_fixed', 'status')
         default_columns = ('device', 'advisory', 'advisory_sir', 'advisory_first_fixed', 'status')
