@@ -10,6 +10,7 @@ class Advisory(NetBoxModel):
     publication_url = models.URLField(blank=True)
     first_published = models.DateTimeField(null=True, blank=True)
     last_updated = models.DateTimeField(null=True, blank=True)
+    first_fixed = models.JSONField(null=True, blank=True, help_text="List of fixed versions")
 
     class Meta:
         ordering = ('-last_updated',)

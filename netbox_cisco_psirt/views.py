@@ -1,5 +1,5 @@
 from netbox.views import generic
-from . import models, tables
+from . import models, tables, forms
 
 class AdvisoryListView(generic.ObjectListView):
     queryset = models.Advisory.objects.all()
@@ -10,6 +10,7 @@ class AdvisoryView(generic.ObjectView):
 
 class AdvisoryEditView(generic.ObjectEditView):
     queryset = models.Advisory.objects.all()
+    form = forms.AdvisoryForm
 
 class AdvisoryDeleteView(generic.ObjectDeleteView):
     queryset = models.Advisory.objects.all()
@@ -23,6 +24,7 @@ class VulnerabilityView(generic.ObjectView):
 
 class VulnerabilityEditView(generic.ObjectEditView):
     queryset = models.Vulnerability.objects.all()
+    form = forms.VulnerabilityForm
 
 class VulnerabilityDeleteView(generic.ObjectDeleteView):
     queryset = models.Vulnerability.objects.all()

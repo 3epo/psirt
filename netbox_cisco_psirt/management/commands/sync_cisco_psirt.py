@@ -61,7 +61,9 @@ class Command(BaseCommand):
                 self.stdout.write(f"No advisories found for {version}")
                 continue
                 
-            for adv_data in advisories_data:
+                # Parse firstFixed
+                first_fixed = adv_data.get('firstFixed', [])
+                
                 # Create or update Advisory
                 advisory, created = Advisory.objects.update_or_create(
                     advisory_id=adv_data.get('advisoryId'),
@@ -70,6 +72,7 @@ class Command(BaseCommand):
                         'sir': adv_data.get('sir', 'Unknown'),
                         'cvss_base_score': float(adv_data.get('cvssBaseScore', 0.0)),
                         'publication_url': adv_data.get('publicationUrl'),
+                        'first_fixed': first_fixed,
                         # 'first_published': ... parse date
                         # 'last_updated': ... parse date
                     }
