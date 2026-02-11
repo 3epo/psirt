@@ -1,5 +1,5 @@
 from netbox.api.serializers import NetBoxModelSerializer
-from .models import Advisory, Vulnerability
+from ..models import Advisory, Vulnerability
 
 class AdvisorySerializer(NetBoxModelSerializer):
     class Meta:
