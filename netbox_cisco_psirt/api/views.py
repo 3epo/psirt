@@ -9,3 +9,4 @@ class AdvisoryViewSet(NetBoxModelViewSet):
 class VulnerabilityViewSet(NetBoxModelViewSet):
     queryset = models.Vulnerability.objects.all()
     serializer_class = VulnerabilitySerializer
+    

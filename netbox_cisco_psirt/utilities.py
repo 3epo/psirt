@@ -56,6 +56,8 @@ def sync_cisco_psirt_data(stdout=None):
             log(f"No advisories found for {version}")
             continue
             
+        # Collect all advisory IDs found for this version
+        fetched_advisory_ids = []
         for adv_data in advisories_data:
             # Parse firstFixed
             first_fixed = adv_data.get('firstFixed', [])
@@ -71,6 +73,7 @@ def sync_cisco_psirt_data(stdout=None):
                     'first_fixed': first_fixed,
                 }
             )
+            fetched_advisory_ids.append(advisory.id)
             
             # Link to devices
             for device in device_list:
@@ -79,5 +82,13 @@ def sync_cisco_psirt_data(stdout=None):
                     advisory=advisory,
                     defaults={'status': Vulnerability.STATUS_ACTIVE}
                 )
-                
+        
+        # Cleanup: Remove vulnerabilities that are no longer applicable for these devices
+        # (e.g. if device was upgraded and the old vuln is not in the new list)
+        if fetched_advisory_ids:
+            for device in device_list:
+                deleted_count, _ = Vulnerability.objects.filter(device=device).exclude(advisory__id__in=fetched_advisory_ids).delete()
+                if deleted_count > 0:
+                    log(f"Device {device}: Deleted {deleted_count} obsolete vulnerabilities.")
+    
     log("Sync completed.")
