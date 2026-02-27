@@ -5,11 +5,12 @@ from .models import Advisory, Vulnerability
 class AdvisoryTable(NetBoxTable):
     advisory_id = tables.Column(linkify=True)
     first_fixed = tables.Column()
+    affected_versions = tables.Column(verbose_name='Affected Versions')
 
     class Meta(NetBoxTable.Meta):
         model = Advisory
-        fields = ('pk', 'advisory_id', 'title', 'sir', 'cvss_base_score', 'first_published', 'last_updated', 'first_fixed')
-        default_columns = ('advisory_id', 'title', 'sir', 'cvss_base_score', 'first_fixed')
+        fields = ('pk', 'advisory_id', 'title', 'sir', 'cvss_base_score', 'first_published', 'last_updated', 'affected_versions', 'first_fixed')
+        default_columns = ('advisory_id', 'title', 'sir', 'cvss_base_score', 'affected_versions', 'first_fixed')
 
 class VulnerabilityTable(NetBoxTable):
     device = tables.Column(linkify=True)
@@ -39,7 +40,20 @@ class VulnerabilityTable(NetBoxTable):
         orderable=False
     )
     
+    # Clickable column linking to the device's platform
+    device_version = tables.TemplateColumn(
+        template_code="""
+        {% if record.device.platform %}
+            <a href="{% url 'dcim:platform' pk=record.device.platform.pk %}">{{ record.device.platform.name|replace:"Cisco IOS ,Cisco IOS-XE ," }}</a>
+        {% else %}
+            &mdash;
+        {% endif %}
+        """,
+        verbose_name='Device Version',
+        orderable=False
+    )
+    
     class Meta(NetBoxTable.Meta):
         model = Vulnerability
-        fields = ('pk', 'device', 'advisory', 'advisory_sir', 'advisory_first_fixed', 'status')
-        default_columns = ('device', 'advisory', 'advisory_sir', 'advisory_first_fixed', 'status')
+        fields = ('pk', 'device', 'device_version', 'advisory', 'advisory_sir', 'advisory_first_fixed', 'status')
+        default_columns = ('device', 'device_version', 'advisory', 'advisory_sir', 'advisory_first_fixed', 'status')

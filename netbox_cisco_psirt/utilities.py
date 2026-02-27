@@ -73,6 +73,14 @@ def sync_cisco_psirt_data(stdout=None):
                     'first_fixed': first_fixed,
                 }
             )
+            
+            # Record the version that was checked and found to be affected
+            current_versions = advisory.affected_versions or []
+            if version not in current_versions:
+                current_versions.append(version)
+                advisory.affected_versions = current_versions
+                advisory.save()
+                
             fetched_advisory_ids.append(advisory.id)
             
             # Link to devices

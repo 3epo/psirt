@@ -11,6 +11,7 @@ class Advisory(NetBoxModel):
     first_published = models.DateTimeField(null=True, blank=True)
     last_updated = models.DateTimeField(null=True, blank=True)
     first_fixed = models.JSONField(null=True, blank=True, help_text="List of fixed versions")
+    affected_versions = models.JSONField(null=True, blank=True, help_text="List of checked firmware versions")
 
     class Meta:
         ordering = ('-last_updated',)
