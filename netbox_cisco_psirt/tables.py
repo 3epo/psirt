@@ -44,7 +44,7 @@ class VulnerabilityTable(NetBoxTable):
     device_version = tables.TemplateColumn(
         template_code="""
         {% if record.device.platform %}
-            <a href="{% url 'dcim:platform' pk=record.device.platform.pk %}">{{ record.device.platform.name|replace:"Cisco IOS ,Cisco IOS-XE ," }}</a>
+            <a href="{% url 'dcim:platform' pk=record.device.platform.pk %}">{{ record.device.platform.name }}</a>
         {% else %}
             &mdash;
         {% endif %}
