@@ -1,6 +1,7 @@
 from dcim.models import Device
 from netbox_cisco_psirt.models import Advisory, Vulnerability
 from netbox_cisco_psirt.cisco_api import CiscoOpenVulnClient
+from netbox_cisco_psirt.email_notify import send_new_vulnerability_email
 import logging
 
 logger = logging.getLogger(__name__)
@@ -18,6 +19,7 @@ def sync_cisco_psirt_data(stdout=None):
 
     log("Starting Cisco PSIRT sync...")
     client = CiscoOpenVulnClient()
+    new_vulnerabilities = []  # collect newly found vulns for email notification
 
     # 1. Identify Cisco devices
     devices = Device.objects.filter(device_type__manufacturer__name__icontains='Cisco')
@@ -83,13 +85,15 @@ def sync_cisco_psirt_data(stdout=None):
                 
             fetched_advisory_ids.append(advisory.id)
             
-            # Link to devices
+            # Link to devices (track newly created ones for notification)
             for device in device_list:
-                Vulnerability.objects.get_or_create(
+                vuln, vuln_created = Vulnerability.objects.get_or_create(
                     device=device,
                     advisory=advisory,
                     defaults={'status': Vulnerability.STATUS_ACTIVE}
                 )
+                if vuln_created:
+                    new_vulnerabilities.append(vuln)
         
         # Cleanup: Remove vulnerabilities that are no longer applicable for these devices
         # (e.g. if device was upgraded and the old vuln is not in the new list)
@@ -99,4 +103,12 @@ def sync_cisco_psirt_data(stdout=None):
                 if deleted_count > 0:
                     log(f"Device {device}: Deleted {deleted_count} obsolete vulnerabilities.")
     
+    # Send a single batch email for all newly detected vulnerabilities
+    if new_vulnerabilities:
+        log(f"Sending email notification for {len(new_vulnerabilities)} new vulnerability(ies)...")
+        try:
+            send_new_vulnerability_email(new_vulnerabilities)
+        except Exception as e:
+            log(f"Email notification failed: {e}")
+
     log("Sync completed.")
