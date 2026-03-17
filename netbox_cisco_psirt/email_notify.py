@@ -37,36 +37,42 @@ def send_new_vulnerability_email(new_vulnerabilities):
 
     subject = f"[NetBox PSIRT] {len(new_vulnerabilities)} new Cisco vulnerability(ies) found"
 
-    # Build HTML body
-    rows = ""
+    # Build text and HTML bodies
+    text_rows = ""
+    html_rows = ""
     for vuln in new_vulnerabilities:
         advisory = vuln.advisory
         device = vuln.device
         platform = device.platform.name if device and device.platform else "N/A"
-        rows += (
-            f"<tr>"
-            f"<td>{device}</td>"
-            f"<td>{platform}</td>"
-            f"<td><a href='{advisory.publication_url}'>{advisory.advisory_id}</a></td>"
-            f"<td>{advisory.title}</td>"
-            f"<td>{advisory.sir}</td>"
-            f"<td>{advisory.cvss_base_score}</td>"
-            f"</tr>"
+        
+        text_rows += (
+            f"- Device: {device}\n"
+            f"  Platform: {platform}\n"
+            f"  Advisory ID: {advisory.advisory_id} ({advisory.publication_url})\n"
+            f"  Title: {advisory.title}\n"
+            f"  Severity: {advisory.sir}\n"
+            f"  CVSS: {advisory.cvss_base_score}\n\n"
         )
+        
+        html_rows += (
+            f"<li>"
+            f"<b>Device:</b> {device}<br>"
+            f"<b>Platform:</b> {platform}<br>"
+            f"<b>Advisory ID:</b> <a href='{advisory.publication_url}'>{advisory.advisory_id}</a><br>"
+            f"<b>Title:</b> {advisory.title}<br>"
+            f"<b>Severity:</b> {advisory.sir}<br>"
+            f"<b>CVSS:</b> {advisory.cvss_base_score}"
+            f"</li><br>"
+        )
+
+    plain_text = f"The following new Cisco PSIRT vulnerabilities were detected during the last sync:\n\n{text_rows}Log in to NetBox to review the full list of vulnerabilities."
 
     html_body = f"""
     <html><body>
     <p>The following <b>new</b> Cisco PSIRT vulnerabilities were detected during the last sync:</p>
-    <table border="1" cellpadding="5" cellspacing="0" style="border-collapse:collapse;font-family:sans-serif;">
-      <thead>
-        <tr style="background:#333;color:#fff;">
-          <th>Device</th><th>Platform</th><th>Advisory ID</th><th>Title</th><th>Severity</th><th>CVSS</th>
-        </tr>
-      </thead>
-      <tbody>
-        {rows}
-      </tbody>
-    </table>
+    <ul>
+{html_rows}
+    </ul>
     <p>Log in to NetBox to review the full list of vulnerabilities.</p>
     </body></html>
     """
@@ -75,6 +81,7 @@ def send_new_vulnerability_email(new_vulnerabilities):
     msg['Subject'] = subject
     msg['From'] = from_addr
     msg['To'] = ', '.join(to_addrs)
+    msg.attach(MIMEText(plain_text, 'plain'))
     msg.attach(MIMEText(html_body, 'html'))
 
     try:
